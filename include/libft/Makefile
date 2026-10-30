@@ -6,7 +6,7 @@
 #    By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/08 17:45:00 by gchaillo          #+#    #+#              #
-#    Updated: 2026/03/18 09:45:53 by gchaillo         ###   ########.fr        #
+#    Updated: 2026/05/05 21:59:00 by gchaillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRCS =	ft_atoi.c \
 		ft_isalpha.c \
 		ft_isascii.c \
 		ft_isdigit.c \
+		ft_isspace.c \
 		ft_isprint.c \
 		ft_itoa.c \
 		ft_memchr.c \
@@ -55,9 +56,7 @@ SRCS =	ft_atoi.c \
 		ft_lstadd_front.c \
 		ft_lstlast.c \
 		ft_lstsize.c \
-		ft_lstadd_back.c \
-		../get_next_line/get_next_line_utils.c \
-		../get_next_line/get_next_line.c
+		ft_lstadd_back.c
 
 OBJS = $(SRCS:.c=.o)
 

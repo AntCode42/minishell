@@ -6,7 +6,7 @@
 /*   By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:13:52 by gchaillo          #+#    #+#             */
-/*   Updated: 2026/03/18 09:33:00 by gchaillo         ###   ########.fr       */
+/*   Updated: 2026/05/05 21:59:00 by gchaillo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <unistd.h>
 # include <string.h>
 # include <stdint.h>
-# include "../get_next_line/get_next_line.h"
 
 typedef struct s_list
 {
@@ -34,6 +33,7 @@ int		ft_isalnum(int c);
 int		ft_isalpha(int c);
 int		ft_isascii(int c);
 int		ft_isdigit(int c);
+int		ft_isspace(int c);
 int		ft_isprint(int c);
 char	*ft_itoa(int n);
 void	*ft_memchr(const void *s, int c, size_t n);

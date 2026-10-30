@@ -6,33 +6,47 @@
 /*   By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 16:26:05 by gchaillo          #+#    #+#             */
-/*   Updated: 2026/03/30 14:51:52 by gchaillo         ###   ########.fr       */
+/*   Updated: 2026/05/05 22:02:45 by gchaillo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-remplit le tableau des commandes et rempli le type de redir
-*/
+static int	handle_redir(t_cmd *cmd, t_token **tok)
+{
+	int	quoted;
+
+	quoted = 0;
+	if ((*tok)->type == TOKEN_HEREDOC)
+		quoted = (*tok)->next->quoted;
+	if (!add_redir(cmd, (*tok)->type, (*tok)->next->value, quoted))
+		return (0);
+	*tok = (*tok)->next;
+	return (1);
+}
+
+// Remplit le tableau d'arguments de la commande et gère les redirections
 static int	fill_cmd_args(t_cmd *cmd, t_token **tok)
 {
 	int	i;
 
 	i = 0;
-	while (*tok && (*tok)->type != TOKEN_PIPE) //gros gros doute sur la formulation du (*) - a tester fort fort
+	while (*tok && (*tok)->type != TOKEN_PIPE)
 	{
 		if ((*tok)->type == TOKEN_WORD)
 		{
-			cmd->cmd_args[i] = ft_strdup((*tok)->value);
-			if (!cmd->cmd_args[i])
-				return (0);
-			i++;
+			if (!((*tok)->value[0] == '\0' && (*tok)->quoted == 0))
+			{
+				cmd->cmd_args[i] = ft_strdup((*tok)->value);
+				if (!cmd->cmd_args[i])
+					return (0);
+				i++;
+			}
 		}
 		else if (is_redir_type((*tok)->type))
 		{
-			add_redir(cmd, (*tok)->type, (*tok)->next->value);
-			*tok = (*tok)->next;
+			if (!handle_redir(cmd, tok))
+				return (0);
 		}
 		*tok = (*tok)->next;
 	}
@@ -40,9 +54,7 @@ static int	fill_cmd_args(t_cmd *cmd, t_token **tok)
 	return (1);
 }
 
-/*
-cree et rempli une commande (ouais le !fill... c'est moche mais c'est court, cmb)
-*/
+// Crée et initialise une structure de commande à partir des tokens
 static t_cmd	*build_cmd(t_token **tok)
 {
 	t_cmd	*cmd;
@@ -52,18 +64,16 @@ static t_cmd	*build_cmd(t_token **tok)
 	if (!cmd)
 		return (NULL);
 	wc = count_cmd_words(*tok);
-	cmd->cmd_args = malloc(sizeof(char *) * (wc + 1));
+	cmd->cmd_args = ft_calloc(wc + 1, sizeof(char *));
 	if (!cmd->cmd_args || !fill_cmd_args(cmd, tok))
 	{
-		free(cmd);
+		free_cmd(cmd);
 		return (NULL);
 	}
 	return (cmd);
 }
 
-/*
-ajoute une commande a la fin
-*/
+// Ajoute une commande à la fin de la liste chaînée
 static void	cmd_add_back(t_cmd **head, t_cmd *cmd)
 {
 	t_cmd	*tmp;
@@ -80,9 +90,7 @@ static void	cmd_add_back(t_cmd **head, t_cmd *cmd)
 	}
 }
 
-/*
-fonction principale de convertion des tokens en liste 
-*/
+// Fonction principale : convertit les tokens en commandes
 t_cmd	*parse_tokens(t_token *tokens)
 {
 	t_cmd	*head;

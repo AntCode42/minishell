@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+         #
+#    By: agard <agard@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/17 14:30:27 by gchaillo          #+#    #+#              #
-#    Updated: 2026/03/30 15:00:23 by gchaillo         ###   ########.fr        #
+#    Updated: 2026/05/05 15:33:42 by agard            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,12 +72,7 @@ $(NAME): $(LIBFT) $(OBJ)
 	@echo ""
 	@echo "$(BLUE)🔗 Linkage...$(RESET)"
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) $(LDFLAGS) -o $(NAME)
-	@echo ""
-	@echo "$(GREEN)$(BOLD)╔════════════════════════════════════════════════════════╗$(RESET)"
-	@echo "$(GREEN)$(BOLD)║                  ✅ $(NAME) compilé !                ║$(RESET)"
-	@echo "$(GREEN)$(BOLD)╚════════════════════════════════════════════════════════╝$(RESET)"
-	@echo ""
-
+	@echo "$(GREEN)✓ EXECUTABLE CRÉE ✓$(RESET)"
 clean:
 	@echo "$(RED)🧹 Nettoyage des objets...$(RESET)"
 	@rm -rf $(OBJ_DIR)

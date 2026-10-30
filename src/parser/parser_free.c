@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-/*
-libère uniquement la liste des redirections d'une commande
-*/
 static void	free_cmd_redirs(t_cmd *cmd)
 {
 	t_redir	*tmp_redir;
@@ -22,16 +19,14 @@ static void	free_cmd_redirs(t_cmd *cmd)
 	while (cmd->redir_cmd)
 	{
 		tmp_redir = cmd->redir_cmd->next;
-		if (cmd->redir_cmd->file)
-			free(cmd->redir_cmd->file);
+		if (cmd->redir_cmd->int_fd >= 0)
+			close(cmd->redir_cmd->int_fd);
+		free(cmd->redir_cmd->file);
 		free(cmd->redir_cmd);
 		cmd->redir_cmd = tmp_redir;
 	}
 }
 
-/*
-libere la liste de commandes
-*/
 void	free_cmd(t_cmd *cmd)
 {
 	t_cmd	*tmp_cmd;

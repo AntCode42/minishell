@@ -2,6 +2,7 @@
 *.o
 *.a
 minishell
+*.html
 
 # Dossiers
 obj/

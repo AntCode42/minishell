@@ -5,16 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/13 13:42:58 by gchaillo          #+#    #+#             */
-/*   Updated: 2026/03/30 14:51:50 by gchaillo         ###   ########.fr       */
+/*   Created: 2026/03/13 15:37:24 by gchaillo          #+#    #+#             */
+/*   Updated: 2026/05/05 21:52:37 by gchaillo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-crée un nouveau token avec sa valeur et son type
-*/
+// Alloue et initialise un nouveau token
 t_token	*create_token(char *value, t_token_type type)
 {
 	t_token	*token;
@@ -29,13 +27,12 @@ t_token	*create_token(char *value, t_token_type type)
 		return (NULL);
 	}
 	token->type = type;
+	token->quoted = 0;
 	token->next = NULL;
 	return (token);
 }
 
-/*
-ajoute le token à la fin de la liste
-*/
+// Ajoute un token a la fin de la liste de tokens existante
 void	add_token(t_token **list, t_token *new)
 {
 	t_token	*current;
@@ -53,9 +50,7 @@ void	add_token(t_token **list, t_token *new)
 	current->next = new;
 }
 
-/*
-libere la liste de tokens et valeurs.
-*/
+// Libere entierement la memoire d'une liste de tokens
 void	free_tokens(t_token *list)
 {
 	t_token	*tmp;

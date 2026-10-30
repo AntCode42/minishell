@@ -3,53 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+        */
+/*   By: antoine-pro <antoine-pro@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 11:00:33 by gchaillo          #+#    #+#             */
-/*   Updated: 2026/03/30 14:51:45 by gchaillo         ###   ########.fr       */
+/*   Updated: 2026/05/10 11:29:30 by antoine-pro      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-gère si commence par $ ou $?
-retourne la valeur ou remplace par vide si introuvable
-*/
-char	*expand_dollar(char *str, int *i, char *res, t_mini *mini)
+// Gère l'expansion des variables d'environnement (ex: $VAR ou $?)
+static char	*expand_dollar(char *str, int *i, char *res, t_mini *mini)
 {
-	int		start;
-	char	*var_name;
-	char	*val;
-	char	*tmp;
-
-	(*i)++; //pour avancer après le $
+	(*i)++;
 	if (str[*i] == '?')
-	{
-		val = ft_itoa(mini->exit_status);
-		(*i)++;
-		return (join_and_free(res, val));
-	}
+		return (expand_exit_status(res, mini, i));
 	if (!ft_isalnum(str[*i]) && str[*i] != '_')
 		return (append_char(res, '$'));
-	start = *i;
-	while (str[*i] && (ft_isalnum(str[*i]) || str[*i] == '_'))
-		(*i)++;
-	var_name = ft_substr(str, start, *i - start);
-	val = get_env_val(mini->env, var_name);
-	free(var_name);
-	if (val)
-		tmp = ft_strdup(val);
-	else
-		tmp = ft_strdup("");
-	return (join_and_free(res, tmp));
+	return (expand_env_key(str, i, res, mini));
 }
 
-/*
-gère l'intérieur d'une double quote " " :
-permet l'expansion avec $ et garde les autres caractères intacts
-*/
-char	*handle_dquote(char *str, int *i, char *res, t_mini *mini)
+// Gère l'intérieur des doubles guillemets (permet l'expansion de $)
+static char	*handle_dquote(char *str, int *i, char *res, t_mini *mini)
 {
 	(*i)++;
 	while (str[*i] && str[*i] != '"')
@@ -67,11 +42,19 @@ char	*handle_dquote(char *str, int *i, char *res, t_mini *mini)
 	return (res);
 }
 
-/*
-parcourt un mot et gère les quotes simples, doubles, ou les $ à l'extérieur
-retourne le mot entièrement expansé (ce mot existe ?!) sans les quotes
-*/
-char	*expand_word(char *word, t_mini *mini)
+// Gère l'intérieur des simples guillemets (pas d'expansion)
+static char	*handle_squote(char *str, int *i, char *res)
+{
+	(*i)++;
+	while (str[*i] && str[*i] != '\'')
+		res = append_char(res, str[(*i)++]);
+	if (str[*i] == '\'')
+		(*i)++;
+	return (res);
+}
+
+// Parcourt un mot (variables, tilde) et enlève les guillemets
+static char	*expand_word(char *word, t_mini *mini)
 {
 	char	*res;
 	int		i;
@@ -81,15 +64,11 @@ char	*expand_word(char *word, t_mini *mini)
 	while (word && word[i])
 	{
 		if (word[i] == '\'')
-		{
-			i++;
-			while (word[i] && word[i] != '\'')
-				res = append_char(res, word[i++]);
-			if (word[i] == '\'')
-				i++;
-		}
+			res = handle_squote(word, &i, res);
 		else if (word[i] == '"')
 			res = handle_dquote(word, &i, res, mini);
+		else if (word[i] == '~')
+			res = expand_tilde(word, &i, res, mini);
 		else if (word[i] == '$')
 			res = expand_dollar(word, &i, res, mini);
 		else
@@ -98,13 +77,11 @@ char	*expand_word(char *word, t_mini *mini)
 	return (res);
 }
 
-/*
-boucle de l'expander, tourne sur chaque tokens
-il fonctionne que sur les WORDS
-*/
+// Boucle principale de l'expander : parcourt et développe tous les tokens WORD
 void	expand_tokens(t_token *tokens, t_mini *mini)
 {
 	t_token	*tmp;
+	char	*original;
 	char	*new_val;
 
 	tmp = tokens;
@@ -112,8 +89,11 @@ void	expand_tokens(t_token *tokens, t_mini *mini)
 	{
 		if (tmp->type == TOKEN_WORD)
 		{
+			original = tmp->value;
 			new_val = expand_word(tmp->value, mini);
-			free(tmp->value);
+			if (new_val[0] == '\0' && is_unquoted_var(original))
+				tmp->type = TOKEN_EMPTY;
+			free(original);
 			tmp->value = new_val;
 		}
 		tmp = tmp->next;

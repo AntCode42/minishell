@@ -6,15 +6,13 @@
 /*   By: gchaillo <gchaillo@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 10:59:39 by gchaillo          #+#    #+#             */
-/*   Updated: 2026/03/30 14:51:42 by gchaillo         ###   ########.fr       */
+/*   Updated: 2026/05/05 21:13:16 by gchaillo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*
-coucou le ft_joint
-*/
+// Concatène deux chaînes et libère la mémoire
 char	*join_and_free(char *s1, char *s2)
 {
 	char	*res;
@@ -29,10 +27,7 @@ char	*join_and_free(char *s1, char *s2)
 	return (res);
 }
 
-/*
-ajoute un caractère à la fin d'une chaîne en réallouant correctement
-retourne la nouvelle chaîne avec le caractère ajouté
-*/
+// Ajoute un caractère à la fin de la chaîne et réalloue la mémoire
 char	*append_char(char *str, char c)
 {
 	char	*res;
@@ -54,10 +49,7 @@ char	*append_char(char *str, char c)
 	return (res);
 }
 
-/*
-recherche dans environnement
-retourne pointeur vers la valeur ou NULL
-*/
+// Cherche la valeur associée à la clé dans les variables d'environnement
 char	*get_env_val(t_env *env, char *key)
 {
 	int	len;
@@ -70,4 +62,33 @@ char	*get_env_val(t_env *env, char *key)
 		env = env->next;
 	}
 	return (NULL);
+}
+
+char	*expand_exit_status(char *res, t_mini *mini, int *i)
+{
+	char	*status;
+
+	status = ft_itoa(mini->exit_status);
+	(*i)++;
+	return (join_and_free(res, status));
+}
+
+char	*expand_env_key(char *line, int *i, char *res, t_mini *mini)
+{
+	int		start;
+	char	*key;
+	char	*val;
+	char	*tmp;
+
+	start = *i;
+	while (line[*i] && (ft_isalnum(line[*i]) || line[*i] == '_'))
+		(*i)++;
+	key = ft_substr(line, start, *i - start);
+	val = get_env_val(mini->env, key);
+	free(key);
+	if (val)
+		tmp = ft_strdup(val);
+	else
+		tmp = ft_strdup("");
+	return (join_and_free(res, tmp));
 }

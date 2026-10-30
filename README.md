@@ -1,8 +1,8 @@
-*This project has been created as part of the 42 curriculum by agard andgchaillo.*
+*This project has been created as part of the 42 curriculum by agard and gchaillo.*
 
 ## Description
 
-**Minishell** is a project from the 42 curriculum designed to recreate a basic, functional UNIX shell. The goal of this project is to provide a deep understanding of process creation, execution, and synchronization using C. It acts as a miniature version of `bash`, capable of handling commands, arguments, environment variables, pipelines, and redirections.
+**Minishell** is a project from the 42 curriculum designed to recreate a basic, functional UNIX shell. The goal of this project is to provide a deep understanding of process creation, execution, and synchronization using C. It acts as a miniature version of `bash --posix`, capable of handling commands, arguments, environment variables, pipelines, and redirections.
 
 Overview of features implemented:
 *   A working prompt using the `readline` library.
@@ -19,6 +19,20 @@ Overview of features implemented:
     *   `unset` to unset environment variables
     *   `env` to list all environment variables
     *   `exit` to gracefully exit the shell
+
+## Contributions
+
+This was a two-person project. The split below reflects the git history and the file headers of the original repository.
+
+| Area | Main contributor | Files |
+|---|---|---|
+| Execution engine: fork/exec, pipelines, `PATH` lookup | agard | `src/execution/fork_management.c`, `pipe_management.c`, `pipeline.c`, `sort_cmd.c`, `utils/` |
+| Builtins: `echo`, `cd`, `pwd`, `exit` | agard | `src/execution/builtin/` |
+| Redirections and heredoc | agard | `src/execution/redir_management.c`, `heredoc_management.c` |
+| Lexer, parser, expander | gchaillo | `src/lexer/`, `src/parser/`, `src/expander/` |
+| Environment (`env`, `export`, `unset`) and signals | gchaillo | `src/environnement/`, `src/signal/` |
+
+Both contributors worked on the integration (`main.c`, headers, Makefile) and on bug fixing across the whole code base.
 
 ## Instructions
 
@@ -52,6 +66,9 @@ You will then be presented with the custom prompt, where you can start typing ba
 *   [GNU Readline Library documentation](https://tiswww.case.edu/php/chet/readline/rltop.html)
 *   Linux Man pages for system calls (e.g., `man 2 fork`, `man 2 execve`, `man 2 pipe`, `man 2 dup2`, `man 2 sigaction`)
 *   [Tutorial: Writing Your Own Shell](https://brennan.io/2015/01/16/write-a-shell-in-c/) by Stephen Brennan
+*   [42 Cursus Guide: Minishell](https://web.archive.org/web/20260120081536/https://42-cursus.gitbook.io/guide/3-rank-03/minishell)
+*   [How a shell works: What happens when 'ls -l' is typed](https://medium.com/@dkwok94/how-a-shell-works-what-happens-when-ls-l-is-typed-df4eb468a030)
+*   [42 Minishell Guide](https://medium.com/@laamirimarouane8/42-minishell-guide-53600f49742b)
 
 ### AI Usage
 *   **Documentation:** Assistance in writing and formatting this README.
