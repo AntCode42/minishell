@@ -1,0 +1,19 @@
+# Objets et binaire
+*.o
+*.a
+minishell
+
+# Dossiers
+obj/
+
+# Éditeurs
+.vscode/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# clangd option
+.clangd
